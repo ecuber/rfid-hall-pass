@@ -1,3 +1,10 @@
+/*
+  Required libraries (install with Arduino IDE)
+    * RTClib
+    * Adafruit Thermal Printer Library
+    * MFRC522 
+ */
+
 #include <MFRC522.h>
 #include "Adafruit_Thermal.h"
 #include "hallpass.h"
