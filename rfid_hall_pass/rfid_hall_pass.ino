@@ -2,6 +2,7 @@
   Required libraries (install with Arduino IDE)
     * RTClib
     * Adafruit Thermal Printer Library
+    * Adafruit BusIO
     * MFRC522 
  */
 
