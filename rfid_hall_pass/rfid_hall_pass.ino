@@ -28,8 +28,14 @@ Adafruit_Thermal printer(&mySerial);     // Pass addr to printer constructor
 #include <MFRC522.h>
 
 // pin setup
-#define SS_PIN 10
 #define RST_PIN 9
+#define SS_PIN 10 // Labeled SDA on chip
+// DEFINED BY LIBRARY:
+// MOSI: 11
+// MISO: 12
+// SCK: 13
+// IRQ: unconected
+// https://github.com/miguelbalboa/rfid
 
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 MFRC522::MIFARE_Key key;
