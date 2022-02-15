@@ -6,34 +6,42 @@
     * MFRC522 
  */
 
-#include <MFRC522.h>
+/*****MISC. VARIABLES*****/
+#define LED_PIN 69 // need to wire the LED to a digital pin not the 5V
+#include "hallpass.h" // header image
+String lastUID = "bruh";
+
+
+/********PRINTER*********/
 #include "Adafruit_Thermal.h"
-#include "hallpass.h"
-#include <RTClib.h>
-RTC_DS1307 rtc;
 #include "SoftwareSerial.h"
+
 #define TX_PIN 5 // Arduino transmit  YELLOW WIRE  labeled RX on printer
 #define RX_PIN 4 // Arduino receive   GREEN WIRE   labeled TX on printer
 
-#define LED_PIN 69 // need to wire the LED to a digital pin not the 5V
+SoftwareSerial mySerial(RX_PIN, TX_PIN); // Declare SoftwareSerial obj first
+Adafruit_Thermal printer(&mySerial);     // Pass addr to printer constructor
 
+
+/**********RFID*********/
 #include <SPI.h>
 #include <MFRC522.h>
 
+// pin setup
 #define SS_PIN 10
 #define RST_PIN 9
- 
+
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
-
 MFRC522::MIFARE_Key key;
-
-String lastUID = "bruh";
 
 // Init array that will store new NUID
 byte nuidPICC[4];
 
-SoftwareSerial mySerial(RX_PIN, TX_PIN); // Declare SoftwareSerial obj first
-Adafruit_Thermal printer(&mySerial);     // Pass addr to printer constructor
+
+/**********RTC*********/
+#include <RTClib.h>
+RTC_DS1307 rtc; 
+
 
 void setup() {  
   Serial.begin(9600);
@@ -54,8 +62,7 @@ void setup() {
   Serial.println("RTC updated");
 }
 
-void loop() {
-
+void loop() {  
   // Look for new cards
   if ( ! rfid.PICC_IsNewCardPresent())
     return;
@@ -64,14 +71,9 @@ void loop() {
   if ( ! rfid.PICC_ReadCardSerial())
     return;
 
-
-
   for (byte i = 0; i < 4; i++) {
     nuidPICC[i] = rfid.uid.uidByte[i];
   }
-
-  // printer
-  pinMode(7, OUTPUT); digitalWrite(7, LOW);
 
   String userid;
   for (byte i = 0; i < rfid.uid.size; i++) {
@@ -79,12 +81,8 @@ void loop() {
     userid += String(rfid.uid.uidByte[i], HEX);
   }
 
-//  Serial.println(lastUID);
-//  Serial.println(userid);
-//  Serial.print(hourF);
-//  Serial.print(':');
-//  Serial.print(mins);
-//  Serial.println();
+  // printer
+  pinMode(7, OUTPUT); digitalWrite(7, LOW);
 
   if (!lastUID.equals(userid)) {
     DateTime now = rtc.now();
